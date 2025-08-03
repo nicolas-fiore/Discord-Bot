@@ -2,7 +2,7 @@ require('dotenv').config();
 const fs = require('fs'); 
 const path = require('path'); 
 const { REST, Routes } = require('discord.js');
-//adaddedxxcz
+
 const deployCommands = async () => { 
     try {
         const commands = []; 

@@ -4,11 +4,11 @@ const yahooFinance = require('yahoo-finance2').default;
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('stock')
-        .setDescription('Enter a stock/s ticker and get Price and related information back')
+        .setName('quote')
+        .setDescription('Enter a symbol and get related price and information back')
         .addStringOption(option => 
             option.setName('symbol')
-                .setDescription('Search by ticker')
+                .setDescription('Search by Symbol')
                 .setRequired(true)),
 
     async execute(interaction) {
@@ -24,14 +24,18 @@ module.exports = {
             }
             const embed = new EmbedBuilder()
                 .setColor(0xFF0000)
-                .setTitle(`Quote for: ${symbol.toUpperCase()}`)
+                .setTitle(`Quote for: ${symbol}`)
                 .addFields(
-                    { name: 'Name', value: `${result.shortName}`, inline: true },
-                    { name: 'Symbol', value: `${symbol.toUpperCase()}`, inline: true },
+                    { name: 'Symbol', value: `${symbol}`, inline: true },
                     { name: 'Exchange', value: `${result.fullExchangeName}`, inline: true },
+                    { name: 'Name', value: `${result.shortName}`, inline: true },
                     { name: 'Price', value: `$${result.regularMarketPrice}`, inline: true },
                     { name: 'High', value: `$${result.regularMarketDayHigh}`, inline: true },
-                    { name: 'High', value: `$${result.regularMarketDayLow}`, inline: true }
+                    { name: 'Low', value: `$${result.regularMarketDayLow}`, inline: true },
+                    { name: 'Change', value: `${result.regularMarketChangePercent.toFixed(2)}%`, inline: true}, 
+                    { name: '52-day High', value: `$${result.fiftyTwoWeekHigh}`, inline: true }, 
+                    { name: '52-day low', value: `$${result.fiftyTwoWeekLow}`, inline: true }
+
                 )
             await interaction.reply({ embeds : [embed] });
 
@@ -41,7 +45,7 @@ module.exports = {
         
         }
 
-        getStockPrice(ticker)
+        getStockPrice(ticker.toUpperCase()); 
 
     },
 };

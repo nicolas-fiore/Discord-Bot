@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { EmbedBuilder } = require('discord.js'); 
 const yahooFinance = require('yahoo-finance2').default; 
+const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 
 module.exports = {
     data: new SlashCommandBuilder()

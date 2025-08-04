@@ -15,7 +15,7 @@ module.exports = {
 
         async function getStockHistory(symbol) { 
             try{ 
-            const quereyOption = { period1: '2021-02-01', interval: '1d'}
+            const quereyOption = { interval: '2021-02-01', range: '1d'}
             const result = await yahooFinance.chart(symbol, quereyOption); 
 
             return result;

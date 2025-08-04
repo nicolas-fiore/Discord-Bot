@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const yahooFinance = require('yahoo-finance2').default; 
-
+const savedAlerts = []; 
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -22,6 +22,9 @@ module.exports = {
         const symbol = interaction.options.getString('symbol');
         const targetPrice = interaction.options.getNumber('price');
         const direction = interaction.options.getNumber(`direction`); 
+        const userID = interaction.user.id; 
+        const user = await interaction.client.users.fetch(userID); 
+        
         
         await interaction.reply(`Target price of $${targetPrice} has been created for ${symbol.toUpperCase()}`);
         
@@ -31,10 +34,27 @@ module.exports = {
                 
                 if (direction === 1 && result.regularMarketPrice >= targetPrice){ 
                     clearInterval(interval); 
+                    //FIXME: change to user.send when done
                     await interaction.followUp(`Target Price has been hit! ${symbol.toUpperCase()} is now at $${result.regularMarketPrice.toFixed(2)}: Your target price was $${targetPrice}`);
+
+                    const index = savedAlerts.findIndex(alert => alert.interval === interval); 
+                    if (index !== -1) { 
+                        savedAlerts.splice(index, 1);
+                    }
+                    return; 
+
                 } else if (direction === 2 && result.regularMarketPrice <= targetPrice) { 
                     clearInterval(interval); 
+                    //FIXME: change to user.send when done
                     await interaction.followUp(`Target Price has been hit! ${symbol.toUpperCase()} is now at $${result.regularMarketPrice.toFixed(2)}: Your target price was $${targetPrice}`);
+                    
+                    const index = savedAlerts.findIndex(alert => alert.interval === interval); 
+                    
+                    if (index !== -1) { 
+                        savedAlerts.splice(index, 1);
+                    }
+                    return;
+
                 } else {
                     console.log(`Target price:$${targetPrice} > $${result.regularMarketPrice}`)
                 }
@@ -42,7 +62,17 @@ module.exports = {
                 clearInterval(interval); 
                 await interaction.followUp(`the error was ${error.message}`);
             }
+            
         }, 10000);
+        
+        savedAlerts.push({
+            userID, 
+            symbol, 
+            targetPrice, 
+            direction,
+            interval
+        });
+        
     },
 };    
 //ADDME: Private message User 

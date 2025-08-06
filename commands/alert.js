@@ -3,6 +3,7 @@ const yahooFinance = require('yahoo-finance2').default;
 const savedAlerts = []; 
 
 module.exports = {
+    savedAlerts,
     data: new SlashCommandBuilder()
         .setName('alert')
         .setDescription('Enter a symbol and get related price and information back')
